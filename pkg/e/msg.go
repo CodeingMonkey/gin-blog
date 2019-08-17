@@ -1,5 +1,8 @@
 package e
 
+/**
+声明MsgFlags为map（映射），key为int类型，value为string类型
+ */
 var MsgFlags = map[int]string {
 	SUCCESS : "ok",
 	ERROR : "fail",
