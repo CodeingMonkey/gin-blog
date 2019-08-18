@@ -16,6 +16,9 @@ var MsgFlags = map[int]string {
 	ERROR_AUTH : "Token错误",
 }
 
+/**
+传来的code在MsgFlags中不存在的情况，会返回Token错误
+ */
 func GetMsg(code int) string {
 	msg, ok := MsgFlags[code]
 	if ok {

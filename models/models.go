@@ -12,6 +12,10 @@ import (
 
 var db *gorm.DB
 
+/**
+暂时立即是所有model公用的字段，声明成了一个struct，在后续使用的model声明的时候
+只需要把model作为嵌入结构嵌入到新的model的struct里即可
+ */
 type Model struct {
 	ID         int `gorm:"primary_key" json:"id"`
 	CreatedOn  int `json:"created_on"`
