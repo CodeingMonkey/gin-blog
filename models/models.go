@@ -54,8 +54,13 @@ func init() {
 		return tablePrefix + defaultTableName
 	}
 
+	//全局禁用表名复数，不禁用的type User struct对应users表，开启之后对应的就是user表
 	db.SingularTable(true)
+
+	//设置最大空闲连接数
 	db.DB().SetMaxIdleConns(10)
+
+	//设置最大的打开连接数
 	db.DB().SetMaxOpenConns(100)
 }
 
