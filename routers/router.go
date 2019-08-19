@@ -2,10 +2,12 @@ package routers
 
 import (
 	"fmt"
-	"github.com/gin-blog/routers/api/v1"
+	"github.com/gin-blog/middleware/jwt"
+	"github.com/gin-blog/routers/api"
 	"github.com/gin-gonic/gin"
 
 	"github.com/gin-blog/pkg/setting"
+	"github.com/gin-blog/routers/api/v1"
 )
 
 func InitRouter() *gin.Engine {
@@ -23,10 +25,17 @@ func InitRouter() *gin.Engine {
 		})
 	})
 
+	//设置鉴权路由
+	r.POST("/auth", api.GetAuth)
+
+
 	/**
 	创建一个路由组，路由组的路由可以具有相同的路由前缀或者中间件
 	 */
 	apiV1 := r.Group("api/v1")
+
+	//使用鉴权中间件(后面的所有的api/v1开头的路由都会经过这个中间件)
+	apiV1.Use(jwt.JWT())
 
 	//{}代表作用域，作用内的变量只在作用域内有效，作用域内的a变量是没法在作用域外访问的
 	{
@@ -52,7 +61,6 @@ func InitRouter() *gin.Engine {
 		//删除指定文章
 		apiV1.DELETE("/articles/:id", v1.DeleteArticle)
 	}
-	//fmt.Println(a)
 
 
 	return r
