@@ -1,6 +1,7 @@
 package v1
 
 import (
+	"github.com/gin-blog/pkg/logging"
 	"log"
 	"net/http"
 
@@ -32,7 +33,7 @@ func GetArticle(c *gin.Context) {
 	} else {
 		/**
 		为什会遍历去查询处理错误，valid.Errors是切片类型，整套流程走下来遇到多少验证错误，都会赛到slice中
-		 */
+		*/
 		for _, err := range valid.Errors {
 			log.Printf("err.key: %s, err.message: %s", err.Key, err.Message)
 		}
@@ -77,6 +78,7 @@ func GetArticles(c *gin.Context) {
 	} else {
 		for _, err := range valid.Errors {
 			log.Printf("err.key: %s, err.message: %s", err.Key, err.Message)
+			logging.Info(err.Key, err.Message)
 		}
 	}
 

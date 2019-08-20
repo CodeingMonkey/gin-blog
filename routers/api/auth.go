@@ -2,6 +2,7 @@ package api
 
 import (
 	"fmt"
+	"github.com/gin-blog/pkg/logging"
 	"log"
 	"net/http"
 
@@ -14,7 +15,7 @@ import (
 
 /**
 生米高结构的时候，直接打上标记，valid，必传参数，最大长度为50
- */
+*/
 type auth struct {
 	Username string `valid:"Required; MaxSize(50)"`
 	Password string `valid:"Required; MaxSize(50)"`
@@ -29,7 +30,7 @@ func GetAuth(c *gin.Context) {
 
 	/**
 	这种方式就直接验证了username和password必传，且最大长度为50
-	 */
+	*/
 	ok, _ := valid.Valid(&a)
 
 	data := make(map[string]interface{})
@@ -40,7 +41,7 @@ func GetAuth(c *gin.Context) {
 
 			/**
 			生成token，生成的时候，同时设置了token有效期，
-			 */
+			*/
 			token, err := util.GenerateToken(username, password)
 			fmt.Println(err)
 			if err != nil {
@@ -58,9 +59,10 @@ func GetAuth(c *gin.Context) {
 
 		/**
 		验证出现错误的情况，遍历打印错误信息
-		 */
+		*/
 		for _, err := range valid.Errors {
 			log.Println(err.Key, err.Message)
+			logging.Info(err.Key, err.Message)
 		}
 	}
 
