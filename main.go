@@ -92,14 +92,25 @@ func main() {
 	log.Println("Shutdown Server ...")
 
 	/**
-	接收到SIGINT信号之后，规定超时5秒之后，进程会自动结束，下面代码实现了设置5秒后自动结束，但是程序设置了睡眠30S
+	函数返回的ctx是一个上下文环境，设置了超过5秒后，上下文环境自动销毁
 	所以会等sleep结束以后，自动调用cancel函数，结束进程。
-	 */
-	ctx, _ := context.WithTimeout(context.Background(), 5*time.Second)
-	time.Sleep(30 * time.Second)
-	//defer cancel()
+	*/
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+
+	//不等待超时，手动关闭
+	//cancel()
+
+	//超时情况下，上下文环境会自动销毁
+	//time.Sleep(6 * time.Second)
+	//fmt.Println(ctx.Err())
+
+	defer cancel()
+
+	//关闭服务，如果上下文环境在关闭服务之前就销毁了，关闭服务会报错，但是服务依然会被关闭掉（没太想明白，为什么上下文环境已经关闭了，但是s.Shutdown没有报错）
 	if err := s.Shutdown(ctx); err != nil {
 		log.Fatal("Server Shutdown:", err)
+	} else {
+		fmt.Println(err)
 	}
 
 	log.Println("Server exiting")
