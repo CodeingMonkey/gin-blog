@@ -1,6 +1,7 @@
 package v1
 
 import (
+	"fmt"
 	"github.com/Unknwon/com"
 	"github.com/astaxie/beego/validation"
 	"github.com/gin-blog/models"
@@ -14,7 +15,7 @@ import (
 //获取多个文章标签
 /**
 gin.Context可以理解成上下文，它允许我们在中间件之间传递变量、管理流、验证请求的JSON和呈现JSON响应
- */
+*/
 func GetTags(c *gin.Context) {
 	name := c.Query("name")
 
@@ -44,7 +45,13 @@ func GetTags(c *gin.Context) {
 	})
 }
 
-//新增文章标签
+// @Summary 新增文章标签
+// @Produce  json
+// @Param name query string true "Name"
+// @Param state query int false "State"
+// @Param created_by query int false "CreatedBy"
+// @Success 200 {string} json "{"code":200,"data":{},"msg":"ok"}"
+// @Router /api/v1/tags [post]
 func AddTag(c *gin.Context) {
 	name := c.PostForm("name")
 	state := com.StrTo(c.DefaultPostForm("state", "0")).MustInt()
@@ -59,12 +66,11 @@ func AddTag(c *gin.Context) {
 
 	code := e.INVALID_PARAMS
 
-
 	//验证格式没有错误
-	if ! valid.HasErrors() {
+	if !valid.HasErrors() {
 
 		//验证是否存在这个标签
-		if ! models.ExistTagByName(name) {
+		if !models.ExistTagByName(name) {
 			code = e.SUCCESS
 			models.AddTag(name, state, createdBy)
 		} else {
@@ -73,17 +79,25 @@ func AddTag(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, gin.H{
-		"code" : code,
-		"msg" : e.GetMsg(code),
-		"data" : make(map[string]string),
+		"code": code,
+		"msg":  e.GetMsg(code),
+		"data": make(map[string]string),
 	})
 }
 
-//修改文章标签
+// @Summary 修改文章标签
+// @Produce  json
+// @Param id path int true "ID"
+// @Param name query string true "ID"
+// @Param state query int false "State"
+// @Param modified_by query string true "ModifiedBy"
+// @Success 200 {string} json "{"code":200,"data":{},"msg":"ok"}"
+// @Router /api/v1/tags/{id} [put]
 func EditTag(c *gin.Context) {
 	id := com.StrTo(c.Param("id")).MustInt()
 	name := c.PostForm("name")
 	modifiedBy := c.PostForm("modified_by")
+	modifiedOn := c.PostForm("modified_on")
 
 	valid := validation.Validation{}
 
@@ -97,9 +111,10 @@ func EditTag(c *gin.Context) {
 	valid.Required(modifiedBy, "modified_by").Message("修改人不能为空")
 	valid.MaxSize(modifiedBy, 100, "modified_by").Message("修改人最长为100字符")
 	valid.MaxSize(name, 100, "name").Message("名称最长为100字符")
+	fmt.Println(modifiedOn)
 
 	code := e.INVALID_PARAMS
-	if ! valid.HasErrors() {
+	if !valid.HasErrors() {
 		code = e.SUCCESS
 		if models.ExistTagByID(id) {
 			data := make(map[string]interface{})
@@ -111,6 +126,9 @@ func EditTag(c *gin.Context) {
 				data["state"] = state
 			}
 
+			//在入参中增加修改时间字段，判断自定义的callback是否有效
+			fmt.Println(data)
+
 			models.EditTag(id, data)
 		} else {
 			code = e.ERROR_NOT_EXIST_TAG
@@ -118,9 +136,9 @@ func EditTag(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, gin.H{
-		"code" : code,
-		"msg" : e.GetMsg(code),
-		"data" : make(map[string]string),
+		"code": code,
+		"msg":  e.GetMsg(code),
+		"data": make(map[string]string),
 	})
 }
 
@@ -132,7 +150,7 @@ func DeleteTag(c *gin.Context) {
 	valid.Min(id, 1, "id").Message("ID必须大于0")
 
 	code := e.INVALID_PARAMS
-	if ! valid.HasErrors() {
+	if !valid.HasErrors() {
 		code = e.SUCCESS
 		if models.ExistTagByID(id) {
 			models.DeleteTag(id)
@@ -142,8 +160,8 @@ func DeleteTag(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, gin.H{
-		"code" : code,
-		"msg" : e.GetMsg(code),
-		"data" : make(map[string]string),
+		"code": code,
+		"msg":  e.GetMsg(code),
+		"data": make(map[string]string),
 	})
 }

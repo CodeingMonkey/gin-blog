@@ -1,10 +1,5 @@
 package models
 
-import (
-	"github.com/jinzhu/gorm"
-	"time"
-)
-
 /**
 struct里面的属性使用了标签，且属性为json，方便在请求返回时json处理方便
  */
@@ -62,17 +57,17 @@ func和函数名称之间增加了接收者，这种函数叫做方法
 指针作为接收者的方法，指针和值都可以调用
 值作为接收者的方法，只有值能调用这个方法
  */
-func (tag *Tag) BeforeCreate(scope *gorm.Scope) error {
-	scope.SetColumn("CreatedOn", time.Now().Unix())
-
-	return nil
-}
-
-func (tag *Tag) BeforeUpdate(scope *gorm.Scope) error {
-	scope.SetColumn("ModifiedOn", time.Now().Unix())
-
-	return nil
-}
+//func (tag *Tag) BeforeCreate(scope *gorm.Scope) error {
+//	scope.SetColumn("CreatedOn", time.Now().Unix())
+//
+//	return nil
+//}
+//
+//func (tag *Tag) BeforeUpdate(scope *gorm.Scope) error {
+//	scope.SetColumn("ModifiedOn", time.Now().Unix())
+//
+//	return nil
+//}
 
 func ExistTagByID(id int) bool {
 	var tag Tag
@@ -91,6 +86,8 @@ func DeleteTag(id int) bool {
 }
 
 func EditTag(id int, data interface {}) bool {
+	//下面是设置了额外的更新字段modified_on，可以用来验证model.go的代替gorm自带的callback的函数
+	//db.Model(&Tag{}).Set("gorm:modified_on", "OPTION (OPTIMIZE FOR UNKNOWN)").Where("id = ?", id).Updates(data)
 	db.Model(&Tag{}).Where("id = ?", id).Updates(data)
 
 	return true

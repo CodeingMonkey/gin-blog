@@ -2,9 +2,12 @@ package routers
 
 import (
 	"fmt"
+	_ "github.com/gin-blog/docs"
 	"github.com/gin-blog/middleware/jwt"
 	"github.com/gin-blog/routers/api"
 	"github.com/gin-gonic/gin"
+	"github.com/swaggo/gin-swagger"
+	"github.com/swaggo/gin-swagger/swaggerFiles"
 
 	"github.com/gin-blog/pkg/setting"
 	"github.com/gin-blog/routers/api/v1"
@@ -25,13 +28,14 @@ func InitRouter() *gin.Engine {
 		})
 	})
 
+	r.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
+
 	//设置鉴权路由
 	r.POST("/auth", api.GetAuth)
 
-
 	/**
 	创建一个路由组，路由组的路由可以具有相同的路由前缀或者中间件
-	 */
+	*/
 	apiV1 := r.Group("api/v1")
 
 	//使用鉴权中间件(后面的所有的api/v1开头的路由都会经过这个中间件)
@@ -39,7 +43,7 @@ func InitRouter() *gin.Engine {
 
 	//{}代表作用域，作用内的变量只在作用域内有效，作用域内的a变量是没法在作用域外访问的
 	{
-		a:=1
+		a := 1
 		fmt.Println(a)
 		//获取标签列表
 		apiV1.GET("/tags", v1.GetTags)
@@ -61,7 +65,6 @@ func InitRouter() *gin.Engine {
 		//删除指定文章
 		apiV1.DELETE("/articles/:id", v1.DeleteArticle)
 	}
-
 
 	return r
 }
