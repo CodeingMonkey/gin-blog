@@ -1,6 +1,7 @@
 package v1
 
 import (
+	"fmt"
 	"github.com/gin-blog/pkg/logging"
 	"log"
 	"net/http"
@@ -74,7 +75,7 @@ func GetArticles(c *gin.Context) {
 	if !valid.HasErrors() {
 		code = e.SUCCESS
 
-		data["lists"] = models.GetArticles(util.GetPage(c), setting.PageSize, maps)
+		data["lists"] = models.GetArticles(util.GetPage(c), setting.AppSetting.PageSize, maps)
 		data["total"] = models.GetArticleTotal(maps)
 
 	} else {
@@ -98,6 +99,7 @@ func AddArticle(c *gin.Context) {
 	desc := c.PostForm("desc")
 	content := c.PostForm("content")
 	createdBy := c.PostForm("created_by")
+	coverImageUrl := c.PostForm("cover_image_url")
 	state := com.StrTo(c.DefaultPostForm("state", "0")).MustInt()
 
 	valid := validation.Validation{}
@@ -107,6 +109,11 @@ func AddArticle(c *gin.Context) {
 	valid.Required(content, "content").Message("内容不能为空")
 	valid.Required(createdBy, "created_by").Message("创建人不能为空")
 	valid.Range(state, 0, 1, "state").Message("状态只允许0或1")
+	valid.Required(coverImageUrl, "cover_image_url").Message("图片地址不能为空")
+	valid.MaxSize(coverImageUrl, 100, "cover_image_url").Message("图片地址不能超过100")
+
+	fmt.Println("图片地址")
+	fmt.Println(coverImageUrl)
 
 	code := e.INVALID_PARAMS
 	if !valid.HasErrors() {
@@ -118,6 +125,7 @@ func AddArticle(c *gin.Context) {
 			data["content"] = content
 			data["created_by"] = createdBy
 			data["state"] = state
+			data["cover_image_url"] = coverImageUrl
 
 			models.AddArticle(data)
 			code = e.SUCCESS

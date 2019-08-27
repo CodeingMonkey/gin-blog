@@ -17,6 +17,7 @@ type Article struct {
 	Content    string `json:"content"`
 	CreatedBy  string `json:"created_by"`
 	ModifiedBy string `json:"modified_by"`
+	CoverImageUrl string `json:"cover_image_url"`
 	State      int    `json:"state"`
 }
 
@@ -71,6 +72,7 @@ func AddArticle(data map[string]interface{}) bool {
 		Desc:      data["desc"].(string),
 		Content:   data["content"].(string),
 		CreatedBy: data["created_by"].(string),
+		CoverImageUrl: data["cover_image_url"].(string),
 		State:     data["state"].(int),
 	})
 

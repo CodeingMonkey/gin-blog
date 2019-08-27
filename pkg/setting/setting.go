@@ -7,83 +7,67 @@ import (
 	"github.com/go-ini/ini"
 )
 
-var (
-	Cfg *ini.File
+type App struct {
+	JwtSecret string
+	PageSize int
+	RuntimeRootPath string
 
+	ImagePrefixUrl string
+	ImageSavePath string
+	ImageMaxSize int
+	ImageAllowExts []string
+
+	LogSavePath string
+	LogSaveName string
+	LogFileExt string
+	TimeFormat string
+}
+
+var AppSetting = &App{}
+
+type Server struct {
 	RunMode string
-
-	HTTPPort int
-
-	/**
-	time.Duration底层使用了int64类型
-	 */
+	HttpPort int
 	ReadTimeout time.Duration
 	WriteTimeout time.Duration
+}
 
-	PageSize int
-	JwtSecret string
-)
+var ServerSetting = &Server{}
 
-func init() {
-	var err error
+type Database struct {
+	Type string
+	User string
+	Password string
+	Host string
+	Name string
+	TablePrefix string
+}
 
-	/**
-	加载.ini配置文件，返回两个参数，一个是错误信息，一个是指向文件的指针
-	参数可以是字符串类型的文件名或者是字节切片
-	 */
-	Cfg, err = ini.Load("conf/app.ini")
+var DatabaseSetting = &Database{}
+
+func Setup() {
+	Cfg, err := ini.Load("conf/app.ini")
 	if err != nil {
 		log.Fatalf("Fail to parse 'conf/app.ini': %v", err)
 	}
 
-	/**
-	读取ini默认分区的的key为RUN_MODE的值
-	 */
-	LoadBase()
-
-	/**
-	读取ini文件的server分区下的内容
-	[server]：ini文件的分区格式如上，[]中间是分区的名称
-	 */
-	LoadServer()
-
-	/**
-	读取ini文件的app分区下面的内容
-	 */
-	LoadApp()
-}
-
-func LoadBase() {
-	/**
-	由 Must 开头的方法名允许接收一个相同类型的参数来作为默认值
-	当键不存在或者转换失败时，则会直接返回该默认值
-	MustString 方法必须传递一个默认值
-	*/
-	RunMode = Cfg.Section("").Key("RUN_MODE").MustString("debug")
-}
-
-func LoadServer() {
-	sec, err := Cfg.GetSection("server")
+	err = Cfg.Section("app").MapTo(AppSetting)
 	if err != nil {
-		log.Fatalf("Fail to get section 'server': %v", err)
+		log.Fatalf("Cfg.MapTo AppSetting err: %v", err)
 	}
 
-	RunMode = Cfg.Section("").Key("RUN_MODE").MustString("debug")
+	AppSetting.ImageMaxSize = AppSetting.ImageMaxSize * 1024 * 1024
 
-	HTTPPort = sec.Key("HTTP_PORT").MustInt(8000)
-	/**
-	ini文件的读取时间和写入时间都是int类型，读取之后，使用time.Duration处理成time.Duration类型
-	 */
-	ReadTimeout = time.Duration(sec.Key("READ_TIMEOUT").MustInt(60)) * time.Second
-	WriteTimeout =  time.Duration(sec.Key("WRITE_TIMEOUT").MustInt(60)) * time.Second
-}
-
-func LoadApp() {
-	sec, err := Cfg.GetSection("app")
+	err = Cfg.Section("server").MapTo(ServerSetting)
 	if err != nil {
-		log.Fatalf("Fail to get section 'app': %v", err)
+		log.Fatalf("Cfg.MapTo ServerSetting err: %v", err)
 	}
 
-	JwtSecret = sec.Key("JWT_SECRET").MustString("!@)*#)!@U#@*!@!)")
-	PageSize = sec.Key("PAGE_SIZE").MustInt(10)
+	ServerSetting.ReadTimeout = ServerSetting.ReadTimeout * time.Second
+	ServerSetting.WriteTimeout = ServerSetting.ReadTimeout * time.Second
+
+	err = Cfg.Section("database").MapTo(DatabaseSetting)
+	if err != nil {
+		log.Fatalf("Cfg.MapTo DatabaseSetting err: %v", err)
+	}
 }

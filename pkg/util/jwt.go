@@ -12,7 +12,7 @@ import (
 byte[setting.JwtSecret]将setting.JwtSecret转换成byte字节
 将string转换成byte切片
  */
-var jwtSecret = []byte(setting.JwtSecret)
+var jwtSecret = []byte(setting.App{}.JwtSecret)
 
 type Claims struct {
 	Username string `json:"username"`

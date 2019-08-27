@@ -4,10 +4,12 @@ import (
 	"fmt"
 	_ "github.com/gin-blog/docs"
 	"github.com/gin-blog/middleware/jwt"
+	"github.com/gin-blog/pkg/upload"
 	"github.com/gin-blog/routers/api"
 	"github.com/gin-gonic/gin"
 	"github.com/swaggo/gin-swagger"
 	"github.com/swaggo/gin-swagger/swaggerFiles"
+	"net/http"
 
 	"github.com/gin-blog/pkg/setting"
 	"github.com/gin-blog/routers/api/v1"
@@ -20,7 +22,7 @@ func InitRouter() *gin.Engine {
 
 	r.Use(gin.Recovery())
 
-	gin.SetMode(setting.RunMode)
+	gin.SetMode(setting.Server{}.RunMode)
 
 	r.GET("/test", func(c *gin.Context) {
 		c.JSON(200, gin.H{
@@ -29,6 +31,10 @@ func InitRouter() *gin.Engine {
 	})
 
 	r.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
+
+	//图片上传路由
+	r.POST("/upload", api.UploadImage)
+	r.StaticFS("/upload/images", http.Dir(upload.GetImageFullPath()))
 
 	//设置鉴权路由
 	r.POST("/auth", api.GetAuth)

@@ -35,12 +35,21 @@ const (
 /**
 main函数之前执行的函数
  */
-func init() {
-	//获取完整的日志路径
-	filePath := getLogFileFullPath()
-	F = openLogFile(filePath)
+func Setup() {
+	var err error
 
-	//创建一个新的日志记录器。out定义要写入日志数据的IO句柄。prefix定义每个生成的日志行的开头。flag定义了日志记录属性
+	//获取日志地址
+	filePath := getLogFilePath()
+
+	//获取日志文件名+后缀
+	fileName := getLogFileName()
+
+	//打开日志文件
+	F, err = openLogFile(fileName, filePath)
+	if err != nil {
+		log.Fatalln(err)
+	}
+
 	logger = log.New(F, DefaultPrefix, log.LstdFlags)
 }
 
