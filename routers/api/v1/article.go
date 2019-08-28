@@ -3,6 +3,7 @@ package v1
 import (
 	"fmt"
 	"github.com/gin-blog/pkg/logging"
+	"github.com/gin-blog/service/article_service"
 	"log"
 	"net/http"
 	"time"
@@ -10,6 +11,7 @@ import (
 	"github.com/Unknwon/com"
 	"github.com/astaxie/beego/validation"
 	"github.com/gin-blog/models"
+	"github.com/gin-blog/pkg/app"
 	"github.com/gin-blog/pkg/e"
 	"github.com/gin-blog/pkg/setting"
 	"github.com/gin-blog/pkg/util"
@@ -17,35 +19,73 @@ import (
 )
 
 //获取单个文章
-func GetArticle(c *gin.Context) {
-	id := com.StrTo(c.Param("id")).MustInt()
+//func GetArticle(c *gin.Context) {
+//	id := com.StrTo(c.Param("id")).MustInt()
+//
+//	valid := validation.Validation{}
+//	valid.Min(id, 1, "id").Message("ID必须大于0")
+//
+//	code := e.INVALID_PARAMS
+//	var data interface{}
+//	if !valid.HasErrors() {
+//		if models.ExistArticleByID(id) {
+//			data = models.GetArticle(id)
+//			code = e.SUCCESS
+//		} else {
+//			code = e.ERROR_NOT_EXIST_ARTICLE
+//		}
+//	} else {
+//		/**
+//		为什会遍历去查询处理错误，valid.Errors是切片类型，整套流程走下来遇到多少验证错误，都会赛到slice中
+//		*/
+//		for _, err := range valid.Errors {
+//			log.Printf("err.key: %s, err.message: %s", err.Key, err.Message)
+//		}
+//	}
+//
+//	c.JSON(http.StatusOK, gin.H{
+//		"code": code,
+//		"msg":  e.GetMsg(code),
+//		"data": data,
+//	})
+//}
 
+//获取单个文章
+func GetArticle(c *gin.Context) {
+	appG := app.Gin{C: c}
+	id := com.StrTo(c.Param("id")).MustInt()
 	valid := validation.Validation{}
 	valid.Min(id, 1, "id").Message("ID必须大于0")
 
-	code := e.INVALID_PARAMS
-	var data interface{}
-	if !valid.HasErrors() {
-		if models.ExistArticleByID(id) {
-			data = models.GetArticle(id)
-			code = e.SUCCESS
-		} else {
-			code = e.ERROR_NOT_EXIST_ARTICLE
-		}
-	} else {
-		/**
-		为什会遍历去查询处理错误，valid.Errors是切片类型，整套流程走下来遇到多少验证错误，都会赛到slice中
-		*/
-		for _, err := range valid.Errors {
-			log.Printf("err.key: %s, err.message: %s", err.Key, err.Message)
-		}
+	//验证有没有错误
+	if valid.HasErrors() {
+
+		//记录验证错误日志
+		app.MarkErrors(valid.Errors)
+
+		//请求返回
+		appG.Response(http.StatusOK, e.INVALID_PARAMS, nil)
+		return //？？上一步都返回数据了，为什么还要return
 	}
 
-	c.JSON(http.StatusOK, gin.H{
-		"code": code,
-		"msg":  e.GetMsg(code),
-		"data": data,
-	})
+	articleService := article_service.Article{ID: id}
+	exists, err := articleService.ExistByID() //判断数据库中文章是否存在
+	if err != nil {
+		appG.Response(http.StatusOK, e.ERROR_CHECK_EXIST_ARTICLE_FAIL, nil)
+		return
+	}
+	if !exists {
+		appG.Response(http.StatusOK, e.ERROR_NOT_EXIST_ARTICLE, nil)
+		return
+	}
+
+	article, err := articleService.Get() //数据库文章存在的情况，从数据库获取文章
+	if err != nil {
+		appG.Response(http.StatusOK, e.ERROR_GET_ARTICLE_FAIL, nil)
+		return
+	}
+
+	appG.Response(http.StatusOK, e.SUCCESS, article)
 }
 
 //获取多个文章
@@ -172,7 +212,7 @@ func EditArticle(c *gin.Context) {
 
 	code := e.INVALID_PARAMS
 	if !valid.HasErrors() {
-		if models.ExistArticleByID(id) {
+		if res, _ := models.ExistArticleByID(id); res {
 			if models.ExistTagByID(tagId) {
 				data := make(map[string]interface{})
 				if tagId > 0 {
@@ -220,7 +260,7 @@ func DeleteArticle(c *gin.Context) {
 
 	code := e.INVALID_PARAMS
 	if !valid.HasErrors() {
-		if models.ExistArticleByID(id) {
+		if res, _ := models.ExistArticleByID(id); res {
 			models.DeleteArticle(id)
 			code = e.SUCCESS
 		} else {
