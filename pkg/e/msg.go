@@ -19,6 +19,7 @@ var MsgFlags = map[int]string {
 	ERROR_UPLOAD_CHECK_IMAGE_FORMAT : "校验图片错误，图片格式或大小有问题",
 	ERROR_CHECK_EXIST_ARTICLE_FAIL : "文章不存在",
 	ERROR_GET_ARTICLE_FAIL : "获取文章失败",
+	ERROR_EXPORT_TAG_FAIL : "导入标签失败",
 }
 
 /**

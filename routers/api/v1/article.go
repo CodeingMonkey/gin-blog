@@ -52,7 +52,7 @@ import (
 
 //获取单个文章
 func GetArticle(c *gin.Context) {
-	appG := app.Gin{C: c}
+	appG := app.Gin{C: c}//实例化响应对象
 	id := com.StrTo(c.Param("id")).MustInt()
 	valid := validation.Validation{}
 	valid.Min(id, 1, "id").Message("ID必须大于0")
@@ -68,6 +68,7 @@ func GetArticle(c *gin.Context) {
 		return //？？上一步都返回数据了，为什么还要return
 	}
 
+	//验证数据是否存在，查找数据操作移动到service层
 	articleService := article_service.Article{ID: id}
 	exists, err := articleService.ExistByID() //判断数据库中文章是否存在
 	if err != nil {
@@ -85,6 +86,7 @@ func GetArticle(c *gin.Context) {
 		return
 	}
 
+	//响应返回
 	appG.Response(http.StatusOK, e.SUCCESS, article)
 }
 
