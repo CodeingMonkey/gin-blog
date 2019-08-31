@@ -4,6 +4,7 @@ import (
 	"fmt"
 	_ "github.com/gin-blog/docs"
 	"github.com/gin-blog/middleware/jwt"
+	"github.com/gin-blog/pkg/export"
 	"github.com/gin-blog/pkg/upload"
 	"github.com/gin-blog/routers/api"
 	"github.com/gin-gonic/gin"
@@ -35,6 +36,10 @@ func InitRouter() *gin.Engine {
 	//图片上传路由
 	r.POST("/upload", api.UploadImage)
 	r.StaticFS("/upload/images", http.Dir(upload.GetImageFullPath()))
+
+	//文件导出路由
+	r.POST("/export", api.ExportCsv)
+	r.StaticFS("/export/csv", http.Dir(export.GetExcelFullPath()))
 
 	//设置鉴权路由
 	r.POST("/auth", api.GetAuth)
