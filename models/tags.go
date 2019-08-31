@@ -100,3 +100,14 @@ func CleanAllTag() bool {
 
 	return true
 }
+
+func GetExportTagsData(maps interface{}) (articles []Tag, err error) {
+
+	/**
+	Preload就是一个预加载器，通过Preload会查询两条sql，并将查询的tag的结果集嵌入到Article的Tag中
+	*/
+	err = db.Where(maps).Find(&articles).Error
+
+	return
+}
+

@@ -28,7 +28,7 @@ func (a Article) exportArticle() (filename string, error e.CustomizeError) {
 	}
 
 	file := xlsx.NewFile()
-	sheet, err := file.AddSheet("标签信息")
+	sheet, err := file.AddSheet("文件信息")
 	if err != nil {
 		error.ErrorCode = e.ERROR_SAVE_HEADER
 		return "", error
@@ -62,7 +62,7 @@ func (a Article) exportArticle() (filename string, error e.CustomizeError) {
 	}
 
 	time := strconv.Itoa(int(time.Now().Unix()))
-	filename = "tags-" + time + ".xlsx"
+	filename = "articles-" + time + ".xlsx"
 
 	fullPath := export.GetExcelFullPath() + filename
 
