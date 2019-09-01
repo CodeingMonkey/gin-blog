@@ -23,6 +23,8 @@ var MsgFlags = map[int]string {
 	ERROR_NOT_TABEL : "数据表不存在",
 	ERROR_SAVE_HEADER : "文件头保存失败",
 	EROOR_SAVE_FILE : "文件保存失败",
+	ERROR_READ_FILE : "读取文件失败",
+	ERROR_FORMAT_ERROR : "文件格式错误",
 }
 
 /**

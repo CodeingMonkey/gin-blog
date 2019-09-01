@@ -41,6 +41,10 @@ func InitRouter() *gin.Engine {
 	r.POST("/export", api.ExportCsv)
 	r.StaticFS("/export/csv", http.Dir(export.GetExcelFullPath()))
 
+	//文件导入路由
+	r.POST("/import", api.ImportCsv)
+
+
 	//设置鉴权路由
 	r.POST("/auth", api.GetAuth)
 

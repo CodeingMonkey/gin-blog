@@ -40,11 +40,16 @@ func ExistTagByName(name string) bool {
 }
 
 func AddTag(name string, state int, createdBy string) bool {
-	db.Create(&Tag{
+	selfError := db.Create(&Tag{
 		Name:      name,
 		State:     state,
 		CreatedBy: createdBy,
-	})
+	}).Error
+
+	//添加标签失败，返回false
+	if selfError != nil {
+		return false
+	}
 
 	return true
 }
@@ -110,4 +115,3 @@ func GetExportTagsData(maps interface{}) (articles []Tag, err error) {
 
 	return
 }
-

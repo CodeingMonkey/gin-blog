@@ -2,9 +2,11 @@ package excel_service
 
 import (
 	"github.com/gin-blog/pkg/e"
+	"io"
 	"strconv"
 
 	"github.com/360EntSecGroup-Skylar/excelize"
+	"github.com/gin-blog/models"
 	"github.com/gin-blog/pkg/export"
 	selfFile "github.com/gin-blog/pkg/file"
 	"github.com/gin-blog/service/tag_service"
@@ -68,6 +70,38 @@ func (t Tag) exportTag() (filename string, error e.CustomizeError) {
 	if err != nil {
 		error.ErrorCode = e.EROOR_SAVE_FILE
 		return "", error
+	}
+
+	return
+}
+
+func (t Tag) importCsv(r io.Reader) (error e.CustomizeError) {
+
+	xlsx, err := excelize.OpenReader(r)
+	if err != nil {
+		error.ErrorCode = e.ERROR_READ_FILE
+	}
+
+	rows, err := xlsx.GetRows("标签信息")
+	if err != nil {
+		error.ErrorCode = e.ERROR_READ_FILE
+	}
+	for key, row := range rows {
+		if key == 0 && (row[0] != "名称" || row[1] != "创建人") { //判断文件格式
+			error.ErrorCode = e.ERROR_FORMAT_ERROR
+			return
+		} else {
+			var data []string
+			for _, cell := range row {
+				data = append(data, cell)
+			}
+
+			rst := models.AddTag(data[0], 1, data[1])
+			if rst != true {
+				error.ErrorCode = e.ERROR_OPERATE_DATABASE
+				return
+			}
+		}
 	}
 
 	return
