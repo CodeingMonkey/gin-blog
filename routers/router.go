@@ -79,6 +79,8 @@ func InitRouter() *gin.Engine {
 		apiV1.PUT("/articles/:id", v1.EditArticle)
 		//删除指定文章
 		apiV1.DELETE("/articles/:id", v1.DeleteArticle)
+		//为文章生成海报
+		apiV1.POST("/articles/poster/generate", v1.GenerateArticlePoster)
 	}
 
 	return r

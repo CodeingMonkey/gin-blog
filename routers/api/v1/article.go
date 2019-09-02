@@ -2,7 +2,9 @@ package v1
 
 import (
 	"fmt"
+	"github.com/boombuler/barcode/qr"
 	"github.com/gin-blog/pkg/logging"
+	"github.com/gin-blog/pkg/qrcode"
 	"github.com/gin-blog/service/article_service"
 	"log"
 	"net/http"
@@ -16,6 +18,10 @@ import (
 	"github.com/gin-blog/pkg/setting"
 	"github.com/gin-blog/pkg/util"
 	"github.com/gin-gonic/gin"
+)
+
+const (
+	QRCODE_URL = "https://acg.app"
 )
 
 //获取单个文章
@@ -52,7 +58,7 @@ import (
 
 //获取单个文章
 func GetArticle(c *gin.Context) {
-	appG := app.Gin{C: c}//实例化响应对象
+	appG := app.Gin{C: c} //实例化响应对象
 	id := com.StrTo(c.Param("id")).MustInt()
 	valid := validation.Validation{}
 	valid.Min(id, 1, "id").Message("ID必须大于0")
@@ -279,4 +285,17 @@ func DeleteArticle(c *gin.Context) {
 		"msg":  e.GetMsg(code),
 		"data": make(map[string]string),
 	})
+}
+
+func GenerateArticlePoster(c *gin.Context) {
+	appG := app.Gin{C: c}
+	qrc := qrcode.NewQrCode(QRCODE_URL, 300, 300, qr.M, qr.Auto)
+	path := qrcode.GetQrCodeFullPath()//二维码保存的完整路径
+	_, _, err := qrc.Encode(path)
+	if err != nil {
+		appG.Response(http.StatusOK, e.ERROR, nil)
+		return
+	}
+
+	appG.Response(http.StatusOK, e.SUCCESS, nil)
 }
