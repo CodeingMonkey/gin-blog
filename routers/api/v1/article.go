@@ -301,6 +301,7 @@ func DeleteArticle(c *gin.Context) {
 }
 */
 
+//这个例子中，没有用到代码中实例化的article对象，实际可以用来为每篇文章生成对应的海报二维码
 func GenerateArticlePoster(c *gin.Context) {
 	appG := app.Gin{C:c}
 	article := &article_service.Article{}

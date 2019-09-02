@@ -85,7 +85,9 @@ func NewArticlePosterBg(name string, ap *ArticlePoster, rect *Rect, pt *Pt) *Art
 func (a *ArticlePosterBg) Generate() (string, string, error) {
 	fullPath := qrcode.GetQrCodeFullPath()//获取完整的二维码存储路径
 	fmt.Println("图片保存完整路径", fullPath)
-	fileName, path, err := a.Qr.Encode(fullPath)//生成二维码文件(到指定的文件夹)
+
+	//可以在此步骤中，查询对应的文章，获取文章的标题或者名称，组合到对应的二维码文件名中，目前代码中所有文件的二维码都是同一个
+	fileName, path, err := a.Qr.Encode(fullPath)//生成二维码文件(到指定的文件夹)，子结构嵌入到父结构中，提升了子结构的属性，可以用父结构对象直接去调用
 	if err != nil {
 		return "", "", err
 	}
