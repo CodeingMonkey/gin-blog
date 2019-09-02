@@ -287,7 +287,7 @@ func DeleteArticle(c *gin.Context) {
 	})
 }
 
-func GenerateArticlePoster(c *gin.Context) {
+/*func GenerateArticlePoster(c *gin.Context) {
 	appG := app.Gin{C: c}
 	qrc := qrcode.NewQrCode(QRCODE_URL, 300, 300, qr.M, qr.Auto)
 	path := qrcode.GetQrCodeFullPath()//二维码保存的完整路径
@@ -298,4 +298,38 @@ func GenerateArticlePoster(c *gin.Context) {
 	}
 
 	appG.Response(http.StatusOK, e.SUCCESS, nil)
+}
+*/
+
+func GenerateArticlePoster(c *gin.Context) {
+	appG := app.Gin{C:c}
+	article := &article_service.Article{}
+	selfQr := qrcode.NewQrCode(QRCODE_URL, 300, 300, qr.M, qr.Auto) // 二维码对象
+	posterName := article_service.GetPosterFlag() + "-" + qrcode.GetQrCodeFileName(selfQr.URL) + selfQr.GetQrCodeExt()//获取海报文件名称（文件名+后缀）
+	articlePoster := article_service.NewArticlePoster(posterName, article, selfQr)//实例化海报对象（包含海报名称+文章对象+二维码对象）
+	articlePosterBgService := article_service.NewArticlePosterBg(//实例化背景对象（背景图片+海报对象）
+		"bg.jpeg",
+		articlePoster,
+		&article_service.Rect{
+			X0: 0,
+			Y0: 0,
+			X1: 550,
+			Y1: 700,
+		},
+		&article_service.Pt{
+			X: 125,
+			Y: 298,
+		},
+	)
+
+	_, filePath, err := articlePosterBgService.Generate()//生成海报（二维码图片+背景图片）
+	if err != nil {
+		appG.Response(http.StatusOK, e.ERROR_GEN_ARTICLE_POSTER_FAIL, nil)
+		return
+	}
+
+	appG.Response(http.StatusOK, e.SUCCESS, map[string]string{
+		"poster_url":      qrcode.GetQrCodeFullUrl(posterName),//用来请求的图片名称
+		"poster_save_url": filePath + posterName,//文件保存ID孩子+文件名称
+	})
 }

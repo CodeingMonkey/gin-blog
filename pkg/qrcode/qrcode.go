@@ -74,7 +74,7 @@ func (q *QrCode) CheckEncode(path string) bool {
 
 //生成二维码
 func (q *QrCode) Encode(path string) (string, string, error) {
-	name := GetQrCodeFileName(q.URL) + q.GetQrCodeExt()//二维码文件名
+	name := GetQrCodeFileName(q.URL) + q.GetQrCodeExt()//二维码文件名（地址+后缀）
 	src := path + name
 	if file.CheckNotExist(src) == true {//校验文件是否不存在，不存在的话，创建文件
 		code, err := qr.Encode(q.URL, q.Level, q.Mode)//返回使用给定内容，给定等级，给定编码方式处理过的条形码

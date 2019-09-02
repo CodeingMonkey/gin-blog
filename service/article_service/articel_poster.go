@@ -1,6 +1,7 @@
 package article_service
 
 import (
+	"fmt"
 	"image"
 	"image/draw"
 	"image/jpeg"
@@ -39,7 +40,7 @@ func (a *ArticlePoster) CheckMergedImage(path string) bool {
 	return true
 }
 
-//打开一个海报图片，图片不存在的话，创建一个海报图片（没有关闭打开的图片文件？？？）
+//打开一个海报图片，图片不存在的话，创建一个海报图片
 func (a *ArticlePoster) OpenMergedImage(path string) (*os.File, error) {
 	f, err := file.MustOpen(a.PosterName, path)
 	if err != nil {
@@ -83,13 +84,14 @@ func NewArticlePosterBg(name string, ap *ArticlePoster, rect *Rect, pt *Pt) *Art
 //创建一个使用了背景图的文章海报二维码
 func (a *ArticlePosterBg) Generate() (string, string, error) {
 	fullPath := qrcode.GetQrCodeFullPath()//获取完整的二维码存储路径
-	fileName, path, err := a.Qr.Encode(fullPath)//生成二维码文件
+	fmt.Println("图片保存完整路径", fullPath)
+	fileName, path, err := a.Qr.Encode(fullPath)//生成二维码文件(到指定的文件夹)
 	if err != nil {
 		return "", "", err
 	}
 
 	if !a.CheckMergedImage(path) {//检查背景图片是否存在，不存在执行if代码
-		mergedF, err := a.OpenMergedImage(path)//打开合并后的图片
+		mergedF, err := a.OpenMergedImage(path)//打开合并后的图片，没有文件就创建文件
 		if err != nil {
 			return "", "", err
 		}

@@ -25,6 +25,7 @@ var MsgFlags = map[int]string {
 	EROOR_SAVE_FILE : "文件保存失败",
 	ERROR_READ_FILE : "读取文件失败",
 	ERROR_FORMAT_ERROR : "文件格式错误",
+	ERROR_GEN_ARTICLE_POSTER_FAIL : "生成文章海报失败",
 }
 
 /**

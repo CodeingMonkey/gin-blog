@@ -12,6 +12,7 @@ import (
 	"github.com/swaggo/gin-swagger/swaggerFiles"
 	"net/http"
 
+	"github.com/gin-blog/pkg/qrcode"
 	"github.com/gin-blog/pkg/setting"
 	"github.com/gin-blog/routers/api/v1"
 )
@@ -44,6 +45,8 @@ func InitRouter() *gin.Engine {
 	//文件导入路由
 	r.POST("/import", api.ImportCsv)
 
+	//二维码图片地址
+	r.StaticFS("/qrcode", http.Dir(qrcode.GetQrCodeFullPath()))
 
 	//设置鉴权路由
 	r.POST("/auth", api.GetAuth)
