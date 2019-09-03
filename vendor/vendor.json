@@ -3,6 +3,11 @@
 	"ignore": "test",
 	"package": [
 		{
+			"checksumSHA1": "YyzeMoCqs3d10cIt9l8TObrcGwE=",
+			"path": "github.com/360EntSecGroup-Skylar/excelize",
+			"revision": ""
+		},
+		{
 			"checksumSHA1": "jJ7xZPq8GxWaMuPab+g0f+wqTqk=",
 			"path": "github.com/KyleBanks/depth",
 			"revision": ""
@@ -37,6 +42,21 @@
 		{
 			"checksumSHA1": "pnz1Fnb3sJlOpkRAF6aP1XTVA3M=",
 			"path": "github.com/astaxie/beego/validation",
+			"revision": ""
+		},
+		{
+			"checksumSHA1": "X/ezkFEECpsC9T8wf1m6jbJo3A4=",
+			"path": "github.com/boombuler/barcode",
+			"revision": ""
+		},
+		{
+			"checksumSHA1": "jWsoIeAcg4+QlCJLZ8jXHiJ5a3s=",
+			"path": "github.com/boombuler/barcode/qr",
+			"revision": ""
+		},
+		{
+			"checksumSHA1": "eSleSl4GUG0cdtN9IrcRwzfaUwI=",
+			"path": "github.com/boombuler/barcode/utils",
 			"revision": ""
 		},
 		{
@@ -105,6 +125,21 @@
 			"revision": ""
 		},
 		{
+			"checksumSHA1": "w01kP96jx5UAf+uWB8m0w8Xghas=",
+			"path": "github.com/golang/freetype",
+			"revision": ""
+		},
+		{
+			"checksumSHA1": "aJ/kX/eCUlrCJBZ26Hwh/RXzAIw=",
+			"path": "github.com/golang/freetype/raster",
+			"revision": ""
+		},
+		{
+			"checksumSHA1": "I3u9Uh9thka1gsgch6QEiPkaAr0=",
+			"path": "github.com/golang/freetype/truetype",
+			"revision": ""
+		},
+		{
 			"checksumSHA1": "C8nYObwbo2oyODQbIT83lY37ajM=",
 			"path": "github.com/golang/protobuf/proto",
 			"revision": ""
@@ -150,6 +185,11 @@
 			"revision": ""
 		},
 		{
+			"checksumSHA1": "2jsbDTvwxafPp7FJjJ8IIFlTLjs=",
+			"path": "github.com/mohae/deepcopy",
+			"revision": ""
+		},
+		{
 			"checksumSHA1": "c4K+xR8x9M38CsC64jmFptMjN4g=",
 			"path": "github.com/robfig/cron",
 			"revision": ""
@@ -170,10 +210,25 @@
 			"revision": ""
 		},
 		{
+			"checksumSHA1": "sx+oAnmg6g7lpmAJNY/FKiTviG8=",
+			"path": "github.com/tealeg/xlsx",
+			"revision": ""
+		},
+		{
 			"checksumSHA1": "ZrlPEkVk6IjB82caqyhOpUx7JFg=",
 			"path": "github.com/ugorji/go/codec",
 			"revision": "e118e2d506a6b252f6b85f2e2f2ac1bfed82f1b8",
 			"revisionTime": "2019-07-23T09:17:30Z"
+		},
+		{
+			"checksumSHA1": "CQYQ8wELyxPMRYOTDLELVtude/M=",
+			"path": "golang.org/x/image/font",
+			"revision": ""
+		},
+		{
+			"checksumSHA1": "euzvwlMLxyD0hwc+raoVsDLv6j4=",
+			"path": "golang.org/x/image/math/fixed",
+			"revision": ""
 		},
 		{
 			"checksumSHA1": "GtamqiJoL7PGHsN454AoffBFMa8=",
