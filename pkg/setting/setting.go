@@ -24,6 +24,7 @@ type App struct {
 	PrefixUrl string
 	ExportSavePath string
 	QrCodeSavePath string
+	FontSavePath string//存放字体的地址
 }
 
 var AppSetting = &App{}
