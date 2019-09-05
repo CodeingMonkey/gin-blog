@@ -4,7 +4,6 @@
 # This helps ensure that nothing gets broken.
 
 _tests() {
-    local vet="" # TODO: make it off
     local gover=$( go version | cut -f 3 -d ' ' )
     # note that codecgen requires fastpath, so you cannot do "codecgen notfastpath"
     local a=( "" "safe"  "notfastpath" "notfastpath safe" "codecgen" "codecgen safe" )
@@ -13,9 +12,10 @@ _tests() {
         echo ">>>> TAGS: $i"
         local i2=${i:-default}
         case $gover in
-            go1.[0-6]*) go test ${zargs[*]} -tags "$i" "$@" ;;
+            go1.[0-6]*) go vet -printfuncs "errorf" "$@" &&
+                              go test ${zargs[*]} -vet off -tags "$i" "$@" ;;
             *) go vet -printfuncs "errorf" "$@" &&
-                     go test ${zargs[*]} -vet "$vet" -tags "alltests $i" -run "Suite" -coverprofile "${i2// /-}.cov.out" "$@" ;;
+                     go test ${zargs[*]} -vet off -tags "alltests $i" -run "Suite" -coverprofile "${i2// /-}.cov.out" "$@" ;;
         esac
         if [[ "$?" != 0 ]]; then return 1; fi 
     done
@@ -225,7 +225,7 @@ EOF
 _usage() {
     cat <<EOF
 primary usage: $0 
-    -[tmpfnld]           -> [tests, make, prebuild (force), inlining diagnostics, mid-stack inlining, race detector]
+    -[tmpfxnld]           -> [tests, make, prebuild (force) (external), inlining diagnostics, mid-stack inlining, race detector]
     -v                    -> verbose
 EOF
     if [[ "$(type -t _usage_run)" = "function" ]]; then _usage_run ; fi
@@ -237,9 +237,12 @@ _main() {
     local zforce
     local zargs=()
     local zverbose=()
-    local zbenchflags=""
+    local zbenchflags
+    # unset zforce
+    zargs=()
+    zbenchflags=""
     OPTIND=1
-    while getopts ":ctmnrgpfvlyzdb:" flag
+    while getopts ":ctmnrgpfvlzdb:" flag
     do
         case "x$flag" in
             'xf') zforce=1 ;;
@@ -261,7 +264,6 @@ _main() {
         'xg') _go ;;
         'xp') _prebuild "$@" ;;
         'xc') _clean "$@" ;;
-        'xy') _analyze_extra "$@" ;;
         'xz') _analyze "$@" ;;
         'xb') _bench "$@" ;;
     esac

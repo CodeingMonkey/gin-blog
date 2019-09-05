@@ -82,7 +82,7 @@ func (t Tag) importCsv(r io.Reader) (error e.CustomizeError) {
 		error.ErrorCode = e.ERROR_READ_FILE
 	}
 
-	rows, err := xlsx.GetRows("标签信息")
+	rows := xlsx.GetRows("标签信息")
 	if err != nil {
 		error.ErrorCode = e.ERROR_READ_FILE
 	}

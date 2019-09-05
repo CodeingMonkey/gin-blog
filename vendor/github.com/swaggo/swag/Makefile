@@ -3,13 +3,11 @@ GOLINT:=$(shell which golint)
 GOIMPORT:=$(shell which goimports)
 GOFMT:=$(shell which gofmt)
 GOBUILD:=$(GOCMD) build
-GOINSTALL:=$(GOCMD) install
 GOCLEAN:=$(GOCMD) clean
 GOTEST:=$(GOCMD) test
 GOGET:=$(GOCMD) get
 GOLIST:=$(GOCMD) list
 GOVET:=$(GOCMD) vet
-u := $(if $(update),-u)
 
 BINARY_NAME:=swag
 PACKAGES:=$(shell $(GOLIST) github.com/swaggo/swag github.com/swaggo/swag/cmd/swag github.com/swaggo/swag/gen)
@@ -20,12 +18,8 @@ export GO111MODULE := on
 all: test build
 
 .PHONY: build
-build: deps
-	$(GOBUILD) -o $(BINARY_NAME) ./cmd/swag
-
-.PHONY: install
-install: deps
-	$(GOINSTALL) ./cmd/swag
+build:
+	$(GOBUILD) -o $(BINARY_NAME) -v ./cmd/...
 
 .PHONY: test
 test:
@@ -51,25 +45,18 @@ clean:
 	$(GOCLEAN)
 	rm -f $(BINARY_NAME)
 
-.PHONY: deps
-deps:
-	$(GOGET) ${u} -d
+.PHONY: install
+install:
+	$(GOGET) -v github.com/swaggo/swag github.com/swaggo/swag/cmd/swag github.com/swaggo/swag/gen
 	$(GOGET) github.com/stretchr/testify/assert
-	$(GOGET) github.com/alecthomas/template
-
-.PHONY: devel-deps
-devel-deps:
-	GO111MODULE=off $(GOGET) -v ${u} \
-		golang.org/x/lint/golint \
-		github.com/swaggo/swag/cmd/swag	\
-		github.com/swaggo/swag/gen
 
 .PHONY: lint
-lint: devel-deps
+lint:
+	which golint || $(GOGET) -u golang.org/x/lint/golint
 	for PKG in $(PACKAGES); do golint -set_exit_status $$PKG || exit 1; done;
 
 .PHONY: vet
-vet: deps devel-deps
+vet:
 	$(GOVET) $(PACKAGES)
 
 .PHONY: fmt

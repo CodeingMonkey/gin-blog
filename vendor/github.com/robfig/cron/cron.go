@@ -16,7 +16,7 @@ type Cron struct {
 	add      chan *Entry
 	snapshot chan []*Entry
 	running  bool
-	ErrorLog Logger
+	ErrorLog *log.Logger
 	location *time.Location
 }
 
@@ -30,11 +30,6 @@ type Schedule interface {
 	// Return the next activation time, later than the given time.
 	// Next is invoked initially, and then each time the job is run.
 	Next(time.Time) time.Time
-}
-
-// Logger is a Logger interface.
-type Logger interface {
-	Printf(format string, v ...interface{})
 }
 
 // Entry consists of a schedule and the func to execute on that schedule.

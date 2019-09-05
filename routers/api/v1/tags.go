@@ -2,7 +2,7 @@ package v1
 
 import (
 	"fmt"
-	"github.com/Unknwon/com"
+	"github.com/unknwon/com"
 	"github.com/astaxie/beego/validation"
 	"github.com/gin-blog/models"
 	"github.com/gin-blog/pkg/e"

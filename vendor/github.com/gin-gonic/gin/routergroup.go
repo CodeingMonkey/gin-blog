@@ -5,7 +5,6 @@
 package gin
 
 import (
-	"fmt"
 	"net/http"
 	"path"
 	"regexp"
@@ -185,9 +184,7 @@ func (group *RouterGroup) StaticFS(relativePath string, fs http.FileSystem) IRou
 
 func (group *RouterGroup) createStaticHandler(relativePath string, fs http.FileSystem) HandlerFunc {
 	absolutePath := group.calculateAbsolutePath(relativePath)
-	fmt.Println("aa", absolutePath)
 	fileServer := http.StripPrefix(absolutePath, http.FileServer(fs))
-	fmt.Println("file",fileServer)
 
 	return func(c *Context) {
 		if _, nolisting := fs.(*onlyfilesFS); nolisting {

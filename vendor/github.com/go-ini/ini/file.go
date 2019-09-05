@@ -302,7 +302,7 @@ func (f *File) writeToBuffer(indent string) (*bytes.Buffer, error) {
 		}
 		alignSpaces := bytes.Repeat([]byte(" "), alignLength)
 
-	KeyList:
+	KEY_LIST:
 		for _, kname := range sec.keyList {
 			key := sec.Key(kname)
 			if len(key.Comment) > 0 {
@@ -347,7 +347,7 @@ func (f *File) writeToBuffer(indent string) (*bytes.Buffer, error) {
 					if kname != sec.keyList[len(sec.keyList)-1] {
 						buf.WriteString(LineBreak)
 					}
-					continue KeyList
+					continue KEY_LIST
 				}
 
 				// Write out alignment spaces before "=" sign

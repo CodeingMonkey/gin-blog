@@ -10,7 +10,7 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/Unknwon/com"
+	"github.com/unknwon/com"
 	"github.com/astaxie/beego/validation"
 	"github.com/gin-blog/models"
 	"github.com/gin-blog/pkg/app"

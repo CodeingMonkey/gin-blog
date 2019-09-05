@@ -1,7 +1,7 @@
 package api
 
 import (
-	"github.com/Unknwon/com"
+	"github.com/unknwon/com"
 	"github.com/gin-blog/pkg/app"
 	"github.com/gin-blog/pkg/e"
 	"github.com/gin-blog/pkg/export"
